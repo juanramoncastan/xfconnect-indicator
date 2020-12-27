@@ -1,0 +1,11 @@
+[Unit]
+Description=xfconnect indicator service
+#After=indicator-messages.service
+After=xfce4-indicator-plugin.target
+
+[Service]
+#Environment=PATH=uncomment:to:override:your:PATH
+ExecStart=/usr/local/bin/xfconnect/xfconnect-indicator.py
+Restart=always
+
+
