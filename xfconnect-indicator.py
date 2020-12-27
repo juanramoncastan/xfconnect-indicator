@@ -1,8 +1,7 @@
 #!/usr/bin/env python3
 
 """
-This is a simple AppIndicator for Ubuntu used as an introduction to 
-AppIndicators. Retrieves a random Pokemon name from a public API.
+This is a kdeconnect indicator for xfce4 environment.
 """
 import gi
 import dbus
