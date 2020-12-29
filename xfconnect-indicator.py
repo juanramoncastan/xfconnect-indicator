@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 
 """
-This is a kdeconnect indicator for xfce4 environment.
+This is a simple AppIndicator for Ubuntu used as an introduction to 
+AppIndicators. Retrieves a random Pokemon name from a public API.
 """
 import gi
 import dbus
@@ -149,7 +150,7 @@ def kdecon_get_devices(indicator):
             indicator.devices[key]['item_share_text'] = item_share_text
 
         if DEBUG : print('\t',key,'->',name,', Trusted: ',trusted,', Reachable: ', connected, ', Battery: ', charge ) # debug
-        
+
     if are_devices_connected :
         indicator.set_icon('xfconnect-icon.svg')
     else:
@@ -202,9 +203,9 @@ def browse(item,dev,):
         browser_object = bus.get_object(browser_obj, browser_path)
         browser_interface = dbus.Interface(browser_object, browser_iface)
         browser_interface.DisplayFolder(mountpoint, '', '')
-    except:
+    except Exception as Argument:
         f = open("/tmp/xfconnect.log", "a") 
-        f.write(str(Argument)) 
+        f.write(str(Argument)+'\n') 
         f.close()
 
 # Function t ring remote device
@@ -216,9 +217,9 @@ def ring(item,dev):
         dbus_object = bus.get_object(obj, path) 
         dbus_interface = dbus.Interface(dbus_object,iface)
         dbus_interface.ring()
-    except:
+    except Exception as Argument:
         f = open("/tmp/xfconnect.log", "a") 
-        f.write(str(Argument)) 
+        f.write(str(Argument)+'\n') 
         f.close()
 
 # Function to open file select dialog
@@ -249,9 +250,9 @@ def send_file(dev,file_to_send):
         dbus_object = bus.get_object(obj, path) 
         dbus_interface = dbus.Interface(dbus_object,iface)
         dbus_interface.shareUrl(file_to_send)
-    except:
+    except Exception as Argument:
         f = open("/tmp/xfconnect.log", "a") 
-        f.write(str(Argument)) 
+        f.write(str(Argument)+'\n') 
         f.close()
 
 # Function for send text (clipboard) to device
@@ -264,9 +265,9 @@ def share_text(item,dev):
         dbus_object = bus.get_object(obj, path) 
         dbus_interface = dbus.Interface(dbus_object,iface)
         dbus_interface.shareText(cb.wait_for_text())
-    except:
+    except Exception as Argument:
         f = open("/tmp/xfconnect.log", "a") 
-        f.write(str(Argument)) 
+        f.write(str(Argument)+'\n') 
         f.close()
 
 
