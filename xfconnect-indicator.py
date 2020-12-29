@@ -7,7 +7,7 @@ AppIndicators. Retrieves a random Pokemon name from a public API.
 import gi
 import dbus
 import os, sys, subprocess
-import signal, time
+import signal, time, datetime
 import logging
 from dbus.mainloop.glib import DBusGMainLoop
 from gi.repository import Gio as gio
@@ -150,7 +150,11 @@ def kdecon_get_devices(indicator):
             indicator.devices[key]['item_share_text'] = item_share_text
 
         if DEBUG : print('\t',key,'->',name,', Trusted: ',trusted,', Reachable: ', connected, ', Battery: ', charge ) # debug
-
+           
+        timestamp = str(datetime.datetime.now())+" "
+        f = open("/tmp/xfconnect.log", "a") 
+        f.write(timestamp+'Holaaaaa'+'\n') 
+        f.close()
     if are_devices_connected :
         indicator.set_icon('xfconnect-icon.svg')
     else:
@@ -191,9 +195,10 @@ def browse(item,dev,):
             dbus_interface.mountAndWait() 
             time.sleep(0.15)
         mountpoint = dbus_interface.mountPoint()
-    except:
+    except Exception as Argument:
+        timestamp = str(datetime.datetime.now())+" "
         f = open("/tmp/xfconnect.log", "a") 
-        f.write(str(Argument)) 
+        f.write(timestamp+str(Argument)+'\n') 
         f.close()
         
     browser_obj = 'org.xfce.Thunar'
@@ -204,8 +209,9 @@ def browse(item,dev,):
         browser_interface = dbus.Interface(browser_object, browser_iface)
         browser_interface.DisplayFolder(mountpoint, '', '')
     except Exception as Argument:
+        timestamp = str(datetime.datetime.now())+" "
         f = open("/tmp/xfconnect.log", "a") 
-        f.write(str(Argument)+'\n') 
+        f.write(timestamp+str(Argument)+'\n') 
         f.close()
 
 # Function t ring remote device
@@ -218,8 +224,9 @@ def ring(item,dev):
         dbus_interface = dbus.Interface(dbus_object,iface)
         dbus_interface.ring()
     except Exception as Argument:
+        timestamp = str(datetime.datetime.now())+" "
         f = open("/tmp/xfconnect.log", "a") 
-        f.write(str(Argument)+'\n') 
+        f.write(timestamp+str(Argument)+'\n') 
         f.close()
 
 # Function to open file select dialog
@@ -251,8 +258,9 @@ def send_file(dev,file_to_send):
         dbus_interface = dbus.Interface(dbus_object,iface)
         dbus_interface.shareUrl(file_to_send)
     except Exception as Argument:
+        timestamp = str(datetime.datetime.now())+" "
         f = open("/tmp/xfconnect.log", "a") 
-        f.write(str(Argument)+'\n') 
+        f.write(timestamp+str(Argument)+'\n') 
         f.close()
 
 # Function for send text (clipboard) to device
@@ -266,8 +274,9 @@ def share_text(item,dev):
         dbus_interface = dbus.Interface(dbus_object,iface)
         dbus_interface.shareText(cb.wait_for_text())
     except Exception as Argument:
+        timestamp = str(datetime.datetime.now())+" "
         f = open("/tmp/xfconnect.log", "a") 
-        f.write(str(Argument)+'\n') 
+        f.write(timestamp+str(Argument)+'\n') 
         f.close()
 
 
