@@ -151,10 +151,6 @@ def kdecon_get_devices(indicator):
 
         if DEBUG : print('\t',key,'->',name,', Trusted: ',trusted,', Reachable: ', connected, ', Battery: ', charge ) # debug
            
-        timestamp = str(datetime.datetime.now())+" "
-        f = open("/tmp/xfconnect.log", "a") 
-        f.write(timestamp+'Holaaaaa'+'\n') 
-        f.close()
     if are_devices_connected :
         indicator.set_icon('xfconnect-icon.svg')
     else:
