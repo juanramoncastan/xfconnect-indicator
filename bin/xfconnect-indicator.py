@@ -152,9 +152,9 @@ def kdecon_get_devices(indicator):
         if DEBUG : print('\t',key,'->',name,', Trusted: ',trusted,', Reachable: ', connected, ', Battery: ', charge ) # debug
            
     if are_devices_connected :
-        indicator.set_icon('xfconnect-icon.svg')
+        indicator.set_icon('../share/xfconnect/xfconnect-icon.svg')
     else:
-        indicator.set_icon('xfconnect-icon-disconnected.svg')
+        indicator.set_icon('../share/xfconnect/xfconnect-icon-disconnected.svg')
         
 
 def device_get_property(dev,prop):
@@ -305,7 +305,7 @@ if __name__ == "__main__":
     mysignals = signalCatcher()
     signal.signal(signal.SIGINT, signal.SIG_DFL)
     
-    indicatorApp = indicatorObject('xfconnect-icon.svg') # Creating indicator object
+    indicatorApp = indicatorObject('../share/xfconnect/xfconnect-icon.svg') # Creating indicator object
     gtk.main() # Gtk mainloop
 
 
