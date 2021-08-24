@@ -13,10 +13,24 @@ from dbus.mainloop.glib import DBusGMainLoop
 from gi.repository import Gio as gio
 gi.require_version("Gdk", "3.0")
 gi.require_version("Gtk", "3.0")
-gi.require_version('AppIndicator3', '0.1')
 from gi.repository import Gdk as gdk
 from gi.repository import Gtk as gtk
-from gi.repository import AppIndicator3 as appindicator
+
+def module_exists(module_name):
+    try:
+        gi.require_version(module_name, '0.1')
+    except:
+        return False
+    else:
+        return True
+
+if module_exists('AppIndicator3'):
+    from gi.repository import AppIndicator3 as appindicator
+elif module_exists('AyatanaAppIndicator3'):
+    from gi.repository import AyatanaAppIndicator3 as appindicator
+else:
+    print('Requires either AppIndicator3 or AyatanaAppIndicator3')
+    exit(1)
 
 
 DEBUG=False
