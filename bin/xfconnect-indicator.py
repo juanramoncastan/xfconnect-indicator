@@ -13,11 +13,26 @@ from dbus.mainloop.glib import DBusGMainLoop
 from gi.repository import Gio as gio
 gi.require_version("Gdk", "3.0")
 gi.require_version("Gtk", "3.0")
-gi.require_version('AppIndicator3', '0.1')
+
 from gi.repository import Gdk as gdk
 from gi.repository import Gtk as gtk
-from gi.repository import AppIndicator3 as appindicator
 
+
+def module_exists(module_name):
+    try:
+        gi.require_version(module_name, '0.1')
+    except:
+        return False
+    else:
+        return True
+
+if module_exists('AppIndicator3'):
+    from gi.repository import AppIndicator3 as appindicator
+elif module_exists('AyatanaAppIndicator3'):
+    from gi.repository import AyatanaAppIndicator3 as appindicator
+else:
+    print('Requires either AppIndicator3 or AyatanaAppIndicator3')
+    exit(1)
 
 DEBUG=False
 
@@ -84,6 +99,7 @@ def kdecon_get_devices(indicator):
             chrg = '(charging)'
         else:
             chrg = '(wasting)'
+
         are_devices_connected = are_devices_connected or connected
         if trusted: 
             if key in indicator.devices.keys(): # If trusted device exists in devices{dictionary} we take items Gobjects
@@ -132,8 +148,8 @@ def kdecon_get_devices(indicator):
                 # Creates a new sub-dictionary  with values and its submenu items as Gobjects for the trusted device 
                 indicator.devices[key] = {}
             
-            
-            item_battery.set_label('Batery: '+str(charge)+'% '+chrg) # Sets the label of battery submenu item 
+            percent='% '
+            item_battery.set_label('Batery: '+str(charge)+percent+chrg) # Sets the label of battery submenu item 
             item_sensitive(item,connected) # State of clickabilty of device menu item
             indicator.menu.show_all()
             # Sets values of the sub-dictionary of this device (key)
