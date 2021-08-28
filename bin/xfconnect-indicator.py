@@ -63,6 +63,7 @@ class signalCatcher():
         bus.add_signal_receiver(handler_function=echoSignal, dbus_interface = 'org.kde.kdeconnect.daemon', signal_name = 'deviceListChanged')
         bus.add_signal_receiver(handler_function=echoSignal, dbus_interface = 'org.kde.kdeconnect.device', signal_name = 'nameChanged')
         bus.add_signal_receiver(handler_function=echoSignal, dbus_interface = 'org.kde.kdeconnect.device.battery', signal_name = 'stateChanged')
+        bus.add_signal_receiver(handler_function=echoSignal, dbus_interface = 'org.kde.kdeconnect.device', signal_name = 'pluginsChanged')
 
 
 def build_menu_indicator():
@@ -80,6 +81,7 @@ def kdecon_get_devices(indicator):
     dbus_object = bus.get_object('org.kde.kdeconnect.daemon','/modules/kdeconnect')
     dbus_interface = dbus.Interface(dbus_object, 'org.kde.kdeconnect.daemon')
     dev = dbus_interface.deviceNames()
+
     
     for key in list(indicator.devices.keys()):
         if not key in dev.keys() or not device_get_property(key,'isTrusted'):
@@ -90,15 +92,39 @@ def kdecon_get_devices(indicator):
     
     are_devices_connected = False
     for key in dev.keys():
+    
+        percent=' '
+        chrg = '(disabled)'
+        charging = None
+        charge = ''
+    
         name = dev[key]
+        
         connected = device_get_property(key,'isReachable')
         trusted = device_get_property(key,'isTrusted')
-        charge = device_method(key,connected,'battery','charge')
-        charging = device_method(key,connected,'battery','isCharging')
-        if charging :
-            chrg = '(charging)'
-        else:
-            chrg = '(wasting)'
+        
+        # Check loaded modules
+        mod_battery = device_method(key, connected, 'isPluginEnabled', None, 'kdeconnect_battery')
+        mod_sftp = device_method(key, connected, 'isPluginEnabled',None, 'kdeconnect_sftp')
+        mod_ring = device_method(key, connected, 'isPluginEnabled',None, 'kdeconnect_findmyphone')
+        mod_share = device_method(key, connected, 'isPluginEnabled',None, 'kdeconnect_share')
+        mod_clipboard = device_method(key, connected, 'isPluginEnabled',None, 'kdeconnect_clipboard')
+        
+        
+
+        # if battery module is loaded...
+        if mod_battery :
+            charge = device_method(key,connected,'charge', 'battery')
+            charging = device_method(key,connected,'isCharging', 'battery',)
+            if charging :
+                chrg = '(charging)'
+            else:
+                chrg = '(wasting)'
+
+        # if  browse module is loaded...
+
+
+
 
         are_devices_connected = are_devices_connected or connected
         if trusted: 
@@ -148,9 +174,14 @@ def kdecon_get_devices(indicator):
                 # Creates a new sub-dictionary  with values and its submenu items as Gobjects for the trusted device 
                 indicator.devices[key] = {}
             
-            percent='% '
+            
             item_battery.set_label('Batery: '+str(charge)+percent+chrg) # Sets the label of battery submenu item 
             item_sensitive(item,connected) # State of clickabilty of device menu item
+            item_sensitive(item_battery, mod_battery)
+            item_sensitive(item_browse, mod_sftp)
+            item_sensitive(item_ring, mod_ring)
+            item_sensitive(item_send_file, mod_share)
+            item_sensitive(item_share_text, mod_clipboard)
             indicator.menu.show_all()
             # Sets values of the sub-dictionary of this device (key)
             indicator.devices[key]['name'] = name 
@@ -183,15 +214,18 @@ def device_get_property(dev,prop):
     return prop_value
 
 
-def device_method(dev, is_reachable=False, part=None, meth=None):
-    obj = 'org.kde.kdeconnect'
-    path = '/modules/kdeconnect/devices/'+dev
-    iface = 'org.kde.kdeconnect.device'
-    if is_reachable and part and meth:
-        dbus_object = bus.get_object(obj, path) 
-        dbus_interface = dbus.Interface(dbus_object, 'org.kde.kdeconnect.device.'+part)
-        method = dbus_interface.get_dbus_method(meth)
-        return method()
+
+def device_method(dev, is_reachable=False, meth=None, part=None, val=None):
+    dbo = bus.get_object('org.kde.kdeconnect','/modules/kdeconnect/devices/'+dev)
+    #iface = 'org.kde.kdeconnect.device'
+    if is_reachable and meth:
+        if part :
+            dbi = dbus.Interface(dbo, 'org.kde.kdeconnect.device.'+part)
+        else:
+            dbi = dbus.Interface(dbo, 'org.kde.kdeconnect.device')
+        method = dbi.get_dbus_method(meth)
+        if not val: val = ''
+        return method(val)
     else:
         return None
 
