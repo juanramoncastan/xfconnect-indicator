@@ -1,14 +1,13 @@
 #!/usr/bin/env python3
 
 """
-This is a simple AppIndicator for Ubuntu used as an introduction to 
-AppIndicators. Retrieves a random Pokemon name from a public API.
+This is an AppIndicator for Kdeconnect in xfce environment.
 """
 import gi
 import dbus
 import os, sys, subprocess
 import signal, time, datetime
-import logging
+
 from dbus.mainloop.glib import DBusGMainLoop
 from gi.repository import Gio as gio
 gi.require_version("Gdk", "3.0")
