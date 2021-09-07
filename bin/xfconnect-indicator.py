@@ -2,6 +2,7 @@
 
 """
 This is an AppIndicator for Kdeconnect in xfce environment.
+version 0.1
 """
 import gi
 import dbus
