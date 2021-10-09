@@ -78,7 +78,7 @@ def build_menu_indicator():
     item_configure = gtk.ImageMenuItem(image=img_configure, label='Configure')
     item_configure.connect('activate', kdecon_configure)
     menu.append(item_configure)
-    menu.show_all()
+    #menu.show_all()
     
     return [menu,item_configure]
 
@@ -113,17 +113,17 @@ def kdecon_get_devices(indicator):
 
         # Check loaded modules
         
-        mod_battery = device_method( key, connected, 'isPluginEnabled', None, 'kdeconnect_battery' )
-        mod_sftp = device_method( key, connected, 'isPluginEnabled',None, 'kdeconnect_sftp' )
-        mod_ring = device_method( key, connected, 'isPluginEnabled',None, 'kdeconnect_findmyphone' )
-        mod_share = device_method( key, connected, 'isPluginEnabled',None, 'kdeconnect_share' )
-        mod_clipboard = device_method( key, connected, 'isPluginEnabled',None, 'kdeconnect_clipboard' )
-        mod_photo = device_method( key, connected, 'isPluginEnabled',None, 'kdeconnect_photo' )
+        mod_battery = device_get_method( key, 'isPluginEnabled', None, 'kdeconnect_battery' )
+        mod_sftp = device_get_method( key, 'isPluginEnabled',None, 'kdeconnect_sftp' )
+        mod_ring = device_get_method( key, 'isPluginEnabled',None, 'kdeconnect_findmyphone' )
+        mod_share = device_get_method( key, 'isPluginEnabled',None, 'kdeconnect_share' )
+        mod_clipboard = device_get_method( key, 'isPluginEnabled',None, 'kdeconnect_clipboard' )
+        mod_photo = device_get_method( key, 'isPluginEnabled',None, 'kdeconnect_photo' )
 
         # if battery module is loaded...
         if mod_battery :
-            charge = device_method( key, connected, 'charge', 'battery' )
-            charging = device_method( key, connected, 'isCharging', 'battery' )
+            charge = device_get_method( key, 'charge', 'battery' )
+            charging = device_get_method( key, 'isCharging', 'battery' )
             if charging :
                 chrg = '(charging)'
             else:
@@ -206,12 +206,17 @@ def kdecon_get_devices(indicator):
             indicator.devices[key]['item_share_text'] = item_share_text
             indicator.devices[key]['item_photo'] = item_photo
 
-        if DEBUG : print('\t',key,'->',name,', Trusted: ', trusted,', Reachable: ', connected, ', Battery: ', charge ) # debug
-        if DEBUG : print('\t',', Browse: ', mod_sftp ) # debug
-        if DEBUG : print('\t',', Ring: ', mod_ring ) # debug
-        if DEBUG : print('\t',', Send File: ', mod_share ) # debug
-        if DEBUG : print('\t',', Share text: ', mod_clipboard ) # debug
-        if DEBUG : print('\t',', Photo: ', mod_photo ) # debug
+        if DEBUG :
+            print(key,'->',name)
+            print('\tTrusted: ', trusted)
+            print('\tReachable: ', connected)
+            print('\tBattery: ', charge )
+            print('\tCharging' , chrg) # debug
+            print('\tBrowse: ', mod_sftp ) # debug
+            print('\tRing: ', mod_ring ) # debug
+            print('\tSend File: ', mod_share ) # debug
+            print('\tShare text: ', mod_clipboard ) # debug
+            print('\tPhoto: ', mod_photo ) # debug
            
     if are_devices_connected :
         indicator.set_icon('../share/xfconnect/xfconnect-icon.svg')
@@ -229,7 +234,8 @@ def device_get_property( dev, prop ):
     return prop_value
 
 
-def device_method( dev, is_reachable=False, meth=None, part=None, val=None, val2=None ):
+def device_get_method( dev, meth=None, part=None, val=None ):
+    connected = device_get_property(dev,'isReachable')
     obj = 'org.kde.kdeconnect.daemon'
     path = '/modules/kdeconnect/devices/'+dev
     if  part :
@@ -238,15 +244,11 @@ def device_method( dev, is_reachable=False, meth=None, part=None, val=None, val2
         iface = 'org.kde.kdeconnect.device'
 
     dbus_object = bus.get_object(obj,path)
-    dbus_obj = bus.get_object('org.kde.kdeconnect.daemon','/modules/kdeconnect/devices/'+dev)
+    #dbus_obj = bus.get_object('org.kde.kdeconnect.daemon','/modules/kdeconnect/devices/'+dev)
     dbus_interface = iface
 
-    if is_reachable and meth:  
-        if val2 :
-            method = dbus_object.get_dbus_method(meth,dbus_interface)(val,val2)
-        else:
-            method = dbus_object.get_dbus_method(meth,dbus_interface)(val)
-        
+    if connected and meth:  
+        method = dbus_object.get_dbus_method(meth,dbus_interface)(val)
         return method
     else:
         return None
@@ -382,7 +384,7 @@ def take_foto_increment( item, dev, name ):
 
 
 def take_foto_dialog( item, dev, name ):
-    print ( "Photo tomada "+dev)
+    
     file_photo=""
     obj = 'org.kde.kdeconnect.daemon'
     path = '/modules/kdeconnect/devices/'+dev+'/photo'
@@ -415,6 +417,7 @@ def take_foto_dialog( item, dev, name ):
             dbus_interface = dbus.Interface(dbus_object,iface)
             dbus_interface.requestPhoto(whole_path)
             chooser.destroy()
+            if DEBUG: print ( "Taking picture from  "+dev+": "+name)
         except Exception as Argument:
             print("error")
             timestamp = str(datetime.datetime.now())+" "
@@ -422,6 +425,7 @@ def take_foto_dialog( item, dev, name ):
             f.write(timestamp+str(Argument)+'\n') 
             f.close()
     else:
+        if DEBUG: print ( "Canceled...  "+name)
         chooser.destroy()
 
 
