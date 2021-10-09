@@ -1,9 +1,12 @@
 #!/usr/bin/env python3
 
-"""
-This is an AppIndicator for Kdeconnect in xfce environment.
-version 0.1
-"""
+'''
+---------------------------------------------------------------
+Xfconnect-indicator is an AppIndicator for Kdeconnect in xfce environment.
+version 0.2
+---------------------------------------------------------------
+'''
+
 import gi
 import dbus
 import os, sys, subprocess
@@ -38,8 +41,8 @@ else:
     exit(1)
 
 
-
 APPINDICATOR_NAME = 'Xfceconnect-indicator'
+
 
 class indicatorObject:
     def __init__(self, icon_base):
@@ -57,7 +60,6 @@ class indicatorObject:
 
     def set_icon(self,icon):
         self.indicator.set_icon_full(os.path.abspath(icon),'')
-
 
 
 class signalCatcher():
@@ -110,9 +112,7 @@ def kdecon_get_devices(indicator):
         
         connected = device_get_property(key,'isReachable')
         trusted = device_get_property(key,'isTrusted')
-        
-        #enable_photo(key,False)
-        
+
         # Check loaded modules
         mod_battery = device_method(key, connected, 'isPluginEnabled', None, 'kdeconnect_battery')
         mod_sftp = device_method(key, connected, 'isPluginEnabled',None, 'kdeconnect_sftp')
@@ -129,7 +129,6 @@ def kdecon_get_devices(indicator):
                 chrg = '(charging)'
             else:
                 chrg = '(wasting)'
-
 
         are_devices_connected = are_devices_connected or connected
         if trusted: 
@@ -184,8 +183,7 @@ def kdecon_get_devices(indicator):
                 submenu.append(item_photo)
                 # Creates a new sub-dictionary  with values and its submenu items as Gobjects for the trusted device 
                 indicator.devices[key] = {}
-            
-            
+      
             item_battery.set_label('Batery: '+str(charge)+percent+chrg) # Sets the label of battery submenu item 
             item_sensitive(item,connected) # State of clickabilty of device menu item
             item_sensitive(item_battery, mod_battery)
@@ -232,7 +230,6 @@ def device_get_property(dev,prop):
     return prop_value
 
 
-        
 def device_method(dev, is_reachable=False, meth=None, part=None, val=None, val2=None):
     if  part :
         part = '.'+part
@@ -245,9 +242,7 @@ def device_method(dev, is_reachable=False, meth=None, part=None, val=None, val2=
     dbus_obj = bus.get_object('org.kde.kdeconnect.daemon','/modules/kdeconnect/devices/'+dev)
     dbus_interface = iface
 
-    if is_reachable and meth:
-        
-        
+    if is_reachable and meth:  
         if val2 :
             method = dbus_object.get_dbus_method(meth,dbus_interface)(val,val2)
         else:
@@ -256,6 +251,7 @@ def device_method(dev, is_reachable=False, meth=None, part=None, val=None, val2=
         return method
     else:
         return None
+
 
 # Function for browse device file system
 def browse(item,dev): 
@@ -288,6 +284,7 @@ def browse(item,dev):
         f.write(timestamp+str(Argument)+'\n') 
         f.close()
 
+
 # Function ring remote device
 def ring(item,dev):
     obj = 'org.kde.kdeconnect.daemon'
@@ -302,6 +299,7 @@ def ring(item,dev):
         f = open("/tmp/xfconnect.log", "a") 
         f.write(timestamp+str(Argument)+'\n') 
         f.close()
+
 
 # Function to open file select dialog
 def file_chooser(item,dev):
@@ -321,6 +319,7 @@ def file_chooser(item,dev):
     else:
         chooser.destroy()
 
+
 # Function for send files to remote device
 def send_file(dev,file_to_send):
     if DEBUG : print(file_names) # Debug
@@ -336,6 +335,7 @@ def send_file(dev,file_to_send):
         f = open("/tmp/xfconnect.log", "a") 
         f.write(timestamp+str(Argument)+'\n') 
         f.close()
+
 
 # Function for send text (clipboard) to device
 def share_text(item, dev):
@@ -353,8 +353,8 @@ def share_text(item, dev):
         f.write(timestamp+str(Argument)+'\n') 
         f.close()
 
+
 def take_foto_increment(item, dev, name):
-    
     print ( dev )
     file_photo=""
     obj = 'org.kde.kdeconnect.daemon'
@@ -381,8 +381,8 @@ def take_foto_increment(item, dev, name):
         f.write(timestamp+str(Argument)+'\n') 
         f.close()
 
+
 def take_foto_dialog(item, dev, name):
-    
     print ( "Photo tomada "+dev)
     file_photo=""
     obj = 'org.kde.kdeconnect.daemon'
@@ -424,7 +424,6 @@ def take_foto_dialog(item, dev, name):
             f.close()
     else:
         chooser.destroy()
-        
 
 
 def enable_photo(dev,val):
@@ -434,6 +433,7 @@ def enable_photo(dev,val):
     dbus_object = bus.get_object(obj, path) 
     dbus_interface = dbus.Interface(dbus_object,iface)
     aaa = dbus_interface.setPluginEnabled('kdeconnect_photo',val)
+
 
 def item_sensitive(item,connected):
     if connected :
