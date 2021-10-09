@@ -6,7 +6,7 @@ After=xfce4-indicator-plugin.target
 
 [Service]
 #Environment=PATH=uncomment:to:override:your:PATH
-TimeoutStartSec=10s
+TimeoutStartSec=6s
 ExecStart=/usr/local/bin/xfconnect-indicator.py
 TimeoutStartSec=2s
 Restart=on-failure
