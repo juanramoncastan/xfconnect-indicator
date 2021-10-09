@@ -102,9 +102,7 @@ def kdecon_get_devices(indicator):
     
     are_devices_connected = False
     for key in dev.keys():
-    
         name = dev[key]
-    
         percent=' '
         chrg = '(disabled)'
         charging = None
@@ -114,17 +112,18 @@ def kdecon_get_devices(indicator):
         trusted = device_get_property(key,'isTrusted')
 
         # Check loaded modules
-        mod_battery = device_method(key, connected, 'isPluginEnabled', None, 'kdeconnect_battery')
-        mod_sftp = device_method(key, connected, 'isPluginEnabled',None, 'kdeconnect_sftp')
-        mod_ring = device_method(key, connected, 'isPluginEnabled',None, 'kdeconnect_findmyphone')
-        mod_share = device_method(key, connected, 'isPluginEnabled',None, 'kdeconnect_share')
-        mod_clipboard = device_method(key, connected, 'isPluginEnabled',None, 'kdeconnect_clipboard')
-        mod_photo = device_method(key, connected, 'isPluginEnabled',None, 'kdeconnect_photo')
+        
+        mod_battery = device_method( key, connected, 'isPluginEnabled', None, 'kdeconnect_battery' )
+        mod_sftp = device_method( key, connected, 'isPluginEnabled',None, 'kdeconnect_sftp' )
+        mod_ring = device_method( key, connected, 'isPluginEnabled',None, 'kdeconnect_findmyphone' )
+        mod_share = device_method( key, connected, 'isPluginEnabled',None, 'kdeconnect_share' )
+        mod_clipboard = device_method( key, connected, 'isPluginEnabled',None, 'kdeconnect_clipboard' )
+        mod_photo = device_method( key, connected, 'isPluginEnabled',None, 'kdeconnect_photo' )
 
         # if battery module is loaded...
         if mod_battery :
-            charge = device_method(key,connected,'charge', 'battery')
-            charging = device_method(key,connected,'isCharging', 'battery')
+            charge = device_method( key, connected, 'charge', 'battery' )
+            charging = device_method( key, connected, 'isCharging', 'battery' )
             if charging :
                 chrg = '(charging)'
             else:
@@ -220,7 +219,7 @@ def kdecon_get_devices(indicator):
         indicator.set_icon('../share/xfconnect/xfconnect-icon-disconnected.svg')
         
 
-def device_get_property(dev,prop):
+def device_get_property( dev, prop ):
     obj = 'org.kde.kdeconnect.daemon'
     path = '/modules/kdeconnect/devices/'+dev
     iface = 'org.kde.kdeconnect.device'
@@ -230,14 +229,14 @@ def device_get_property(dev,prop):
     return prop_value
 
 
-def device_method(dev, is_reachable=False, meth=None, part=None, val=None, val2=None):
-    if  part :
-        part = '.'+part
-    else:
-        part = ''
+def device_method( dev, is_reachable=False, meth=None, part=None, val=None, val2=None ):
     obj = 'org.kde.kdeconnect.daemon'
     path = '/modules/kdeconnect/devices/'+dev
-    iface = 'org.kde.kdeconnect.device'+part
+    if  part :
+        iface = 'org.kde.kdeconnect.device.'+part
+    else:
+        iface = 'org.kde.kdeconnect.device'
+
     dbus_object = bus.get_object(obj,path)
     dbus_obj = bus.get_object('org.kde.kdeconnect.daemon','/modules/kdeconnect/devices/'+dev)
     dbus_interface = iface
@@ -302,7 +301,7 @@ def ring(item,dev):
 
 
 # Function to open file select dialog
-def file_chooser(item,dev):
+def file_chooser( item, dev ):
     chooser = gtk.FileChooserDialog(title="Select files to send", parent=None, action=gtk.FileChooserAction.OPEN)
     # Changing directory to $HOME
     chooser.set_current_folder(os.environ['HOME'])
@@ -321,7 +320,7 @@ def file_chooser(item,dev):
 
 
 # Function for send files to remote device
-def send_file(dev,file_to_send):
+def send_file( dev, file_to_send ):
     if DEBUG : print(file_names) # Debug
     obj = 'org.kde.kdeconnect.daemon'
     path = '/modules/kdeconnect/devices/'+dev+'/share'
@@ -338,7 +337,7 @@ def send_file(dev,file_to_send):
 
 
 # Function for send text (clipboard) to device
-def share_text(item, dev):
+def share_text( item, dev ):
     cb = gtk.Clipboard.get(gdk.SELECTION_CLIPBOARD)
     obj = 'org.kde.kdeconnect.daemon'
     path = '/modules/kdeconnect/devices/'+dev+'/share'
@@ -354,7 +353,7 @@ def share_text(item, dev):
         f.close()
 
 
-def take_foto_increment(item, dev, name):
+def take_foto_increment( item, dev, name ):
     print ( dev )
     file_photo=""
     obj = 'org.kde.kdeconnect.daemon'
@@ -382,7 +381,7 @@ def take_foto_increment(item, dev, name):
         f.close()
 
 
-def take_foto_dialog(item, dev, name):
+def take_foto_dialog( item, dev, name ):
     print ( "Photo tomada "+dev)
     file_photo=""
     obj = 'org.kde.kdeconnect.daemon'
@@ -426,7 +425,7 @@ def take_foto_dialog(item, dev, name):
         chooser.destroy()
 
 
-def enable_photo(dev,val):
+def enable_photo( dev, val ):
     obj = 'org.kde.kdeconnect.daemon'
     path = '/modules/kdeconnect/devices/'+dev
     iface = 'org.kde.kdeconnect.device'
@@ -435,7 +434,7 @@ def enable_photo(dev,val):
     aaa = dbus_interface.setPluginEnabled('kdeconnect_photo',val)
 
 
-def item_sensitive(item,connected):
+def item_sensitive( item, connected ):
     if connected :
         item.set_sensitive(True)
     else:
@@ -446,12 +445,12 @@ def kdecon_configure(self):
     os.popen('kdeconnect-settings')
 
 
-def echoSignal(*args, **kwargs):
+def echoSignal( *args, **kwargs ):
     #if args[0] : print( args[0] )
     kdecon_get_devices(indicatorApp)
 
 
-def quit(source):
+def quit( source ):
     gtk.main_quit()
 
 
