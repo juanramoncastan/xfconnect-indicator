@@ -91,50 +91,30 @@ def kdecon_get_devices(indicator):
     dbus_object = bus.get_object(obj,path)
     dbus_interface = dbus.Interface(dbus_object, iface)
     dev = dbus_interface.deviceNames()
-
     
+    are_devices_connected = False
+
     for key in list(indicator.devices.keys()):
         if not key in dev.keys() or not device_get_property(key,'isTrusted'):
             indicator.devices[key]['item'].destroy()
             del indicator.devices[key]
     
-    if DEBUG : print('Devices:') # debug
-    
-    are_devices_connected = False
     for key in dev.keys():
-        name = dev[key]
         percent=' '
         chrg = '(disabled)'
         charging = None
         charge = ''
         
+        name = dev[key]
         connected = device_get_property(key,'isReachable')
         trusted = device_get_property(key,'isTrusted')
-
-        # Check loaded modules
         
-        mod_battery = device_get_method( key, 'isPluginEnabled', None, 'kdeconnect_battery' )
-        mod_sftp = device_get_method( key, 'isPluginEnabled',None, 'kdeconnect_sftp' )
-        mod_ring = device_get_method( key, 'isPluginEnabled',None, 'kdeconnect_findmyphone' )
-        mod_share = device_get_method( key, 'isPluginEnabled',None, 'kdeconnect_share' )
-        mod_clipboard = device_get_method( key, 'isPluginEnabled',None, 'kdeconnect_clipboard' )
-        mod_photo = device_get_method( key, 'isPluginEnabled',None, 'kdeconnect_photo' )
-
-        # if battery module is loaded...
-        if mod_battery :
-            charge = device_get_method( key, 'charge', 'battery' )
-            charging = device_get_method( key, 'isCharging', 'battery' )
-            if charging :
-                chrg = '(charging)'
-            else:
-                chrg = '(wasting)'
-
-        are_devices_connected = are_devices_connected or connected
-        if trusted: 
-            if key in indicator.devices.keys(): # If trusted device exists in devices{dictionary} we take items Gobjects
-                # Takes stored values of Gojects in sub-dictionary
+        
+        
+        if trusted:
+            are_devices_connected = are_devices_connected or connected
+            if key in indicator.devices:
                 item = indicator.devices[key]['item']
-                #  Stored Gojects of submenu
                 submenu = indicator.devices[key]['submenu']
                 item_battery = indicator.devices[key]['item_battery']
                 item_browse = indicator.devices[key]['item_browse']
@@ -142,12 +122,15 @@ def kdecon_get_devices(indicator):
                 item_send_file = indicator.devices[key]['item_send_file']
                 item_share_text = indicator.devices[key]['item_share_text']
                 item_photo = indicator.devices[key]['item_photo']
-            else: # If trusted device does NOT exists in devices dictionary we create new items for submenu
-                # New sbubmenu
-                submenu = gtk.Menu()
-                # Device menu item
-                img_device = gtk.Image.new_from_icon_name('stock_cell-phone', gtk.IconSize.MENU)
+            else:
+                indicator.devices[key] = {}
+                device_type = device_get_property( key, 'type' )
+                if device_type == 'smartphone':
+                    img_device = gtk.Image.new_from_icon_name('stock_cell-phone', gtk.IconSize.MENU)
+                elif device_type == 'desktop':
+                    img_device = gtk.Image.new_from_icon_name('computer', gtk.IconSize.MENU)
                 item = gtk.ImageMenuItem(image=img_device, label=name)
+                submenu = gtk.Menu()
                 item.set_submenu(submenu)
                 # Battery submenu item
                 img_battery = gtk.Image.new_from_icon_name('battery', gtk.IconSize.MENU)
@@ -172,7 +155,7 @@ def kdecon_get_devices(indicator):
                 img_photo = gtk.Image.new_from_icon_name('camera-photo', gtk.IconSize.MENU)
                 item_photo = gtk.ImageMenuItem(image=img_photo, label='Take photo')
                 item_photo.connect('activate', take_foto_dialog, key, name)
-                # Append item to menu and items to submenu
+
                 indicator.menu.append(item)
                 submenu.append(item_battery)
                 submenu.append(item_browse)
@@ -180,24 +163,41 @@ def kdecon_get_devices(indicator):
                 submenu.append(item_send_file)
                 submenu.append(item_share_text)
                 submenu.append(item_photo)
-                # Creates a new sub-dictionary  with values and its submenu items as Gobjects for the trusted device 
-                indicator.devices[key] = {}
-      
-            item_battery.set_label('Batery: '+str(charge)+percent+chrg) # Sets the label of battery submenu item 
-            item_sensitive(item,connected) # State of clickabilty of device menu item
-            item_sensitive(item_battery, mod_battery)
-            item_sensitive(item_browse, mod_sftp)
-            item_sensitive(item_ring, mod_ring)
-            item_sensitive(item_send_file, mod_share)
-            item_sensitive(item_share_text, mod_clipboard)
-            item_sensitive(item_photo, mod_photo)
+
+                
+            if connected :
+                mod_battery = device_get_method( key, 'isPluginEnabled', None, 'kdeconnect_battery' ) and device_get_method( key, 'hasPlugin', None, 'kdeconnect_battery' )
+                mod_sftp = device_get_method( key, 'isPluginEnabled',None, 'kdeconnect_sftp' ) and device_get_method( key, 'hasPlugin', None, 'kdeconnect_sftp' )
+                mod_ring = device_get_method( key, 'isPluginEnabled',None, 'kdeconnect_findmyphone' ) and device_get_method( key, 'hasPlugin', None, 'kdeconnect_findmyphone' )
+                mod_share = device_get_method( key, 'isPluginEnabled',None, 'kdeconnect_share' ) and device_get_method( key, 'hasPlugin', None, 'kdeconnect_share' )
+                mod_clipboard = device_get_method( key, 'isPluginEnabled',None, 'kdeconnect_clipboard' ) and device_get_method( key, 'hasPlugin', None, 'kdeconnect_clipboard' )
+                mod_photo = device_get_method( key, 'isPluginEnabled',None, 'kdeconnect_photo' ) and device_get_method( key, 'hasPlugin', None, 'kdeconnect_photo' )
+                
+                # if battery module is loaded...
+                if mod_battery :
+                    charge = device_get_method( key, 'charge', 'battery' )
+                    charging = device_get_method( key, 'isCharging', 'battery' )
+                    if charging :
+                        chrg = '(charging)'
+                    else:
+                        chrg = '(wasting)'
+                        
+                item_battery.set_label('Batery: '+str(charge)+percent+chrg) # Sets the label of battery submenu item 
+                
+                item_sensitive(item_battery, mod_battery)
+                item_sensitive(item_browse, mod_sftp)
+                item_sensitive(item_ring, mod_ring)
+                item_sensitive(item_send_file, mod_share)
+                item_sensitive(item_share_text, mod_clipboard)
+                item_sensitive(item_photo, mod_photo)
+                
+                
+                
             indicator.menu.show_all()
-            # Sets values of the sub-dictionary of this device (key)
+            item_sensitive(item,connected) # State of clickabilty of device menu item
             indicator.devices[key]['name'] = name 
-            indicator.devices[key]['active'] = connected
             indicator.devices[key]['item'] = item
-            indicator.devices[key]['battery'] = charge
-            indicator.devices[key]['charging'] = charging
+            indicator.devices[key]['active'] = connected
             indicator.devices[key]['submenu'] = submenu
             indicator.devices[key]['item_battery'] = item_battery
             indicator.devices[key]['item_browse'] = item_browse
@@ -206,22 +206,14 @@ def kdecon_get_devices(indicator):
             indicator.devices[key]['item_share_text'] = item_share_text
             indicator.devices[key]['item_photo'] = item_photo
 
-        if DEBUG :
-            print(key,'->',name)
-            print('\tTrusted: ', trusted)
-            print('\tReachable: ', connected)
-            print('\tBattery: ', charge )
-            print('\tCharging' , chrg) # debug
-            print('\tBrowse: ', mod_sftp ) # debug
-            print('\tRing: ', mod_ring ) # debug
-            print('\tSend File: ', mod_share ) # debug
-            print('\tShare text: ', mod_clipboard ) # debug
-            print('\tPhoto: ', mod_photo ) # debug
-           
+            
+
     if are_devices_connected :
         indicator.set_icon('../share/xfconnect/xfconnect-icon.svg')
     else:
         indicator.set_icon('../share/xfconnect/xfconnect-icon-disconnected.svg')
+
+
         
 
 def device_get_property( dev, prop ):
@@ -247,7 +239,8 @@ def device_get_method( dev, meth=None, part=None, val=None ):
     #dbus_obj = bus.get_object('org.kde.kdeconnect.daemon','/modules/kdeconnect/devices/'+dev)
     dbus_interface = iface
 
-    if connected and meth:  
+    if connected and meth:
+        
         method = dbus_object.get_dbus_method(meth,dbus_interface)(val)
         return method
     else:
