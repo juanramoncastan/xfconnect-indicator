@@ -125,10 +125,12 @@ def kdecon_get_devices(indicator):
             else:
                 indicator.devices[key] = {}
                 device_type = device_get_property( key, 'type' )
-                if device_type == 'smartphone':
-                    img_device = gtk.Image.new_from_icon_name('stock_cell-phone', gtk.IconSize.MENU)
+                if device_type == 'tablet':
+                    img_device = gtk.Image.new_from_icon_name('tablet', gtk.IconSize.MENU)
                 elif device_type == 'desktop':
                     img_device = gtk.Image.new_from_icon_name('computer', gtk.IconSize.MENU)
+                else :
+                    img_device = gtk.Image.new_from_icon_name('stock_cell-phone', gtk.IconSize.MENU)
                 item = gtk.ImageMenuItem(image=img_device, label=name)
                 submenu = gtk.Menu()
                 item.set_submenu(submenu)
