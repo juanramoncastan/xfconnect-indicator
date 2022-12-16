@@ -3,7 +3,7 @@
 '''
 ---------------------------------------------------------------
 Xfconnect-indicator is an AppIndicator for Kdeconnect in xfce environment.
-version 0.3
+version 0.2
 ---------------------------------------------------------------
 '''
 
@@ -20,8 +20,6 @@ gi.require_version("Gtk", "3.0")
 
 from gi.repository import Gdk as gdk
 from gi.repository import Gtk as gtk
-
-import math
 
 # Set to True to get console output control
 DEBUG=False
@@ -170,35 +168,23 @@ def kdecon_get_devices(indicator):
 
                 
             if connected :
-                mod_battery = device_get_method( key, 'hasPlugin', None, 'kdeconnect_battery' ) and  device_get_method( key, 'isPluginEnabled', None, 'kdeconnect_battery' )
-                mod_sftp = device_get_method( key, 'hasPlugin', None, 'kdeconnect_sftp' ) and device_get_method( key, 'isPluginEnabled',None, 'kdeconnect_sftp' )
-                mod_ring =  device_get_method( key, 'hasPlugin', None, 'kdeconnect_findmyphone' ) and device_get_method( key, 'isPluginEnabled',None, 'kdeconnect_findmyphone' )
-                mod_share =  device_get_method( key, 'hasPlugin', None, 'kdeconnect_share' ) and device_get_method( key, 'isPluginEnabled',None, 'kdeconnect_share' )
-                mod_clipboard =  device_get_method( key, 'hasPlugin', None, 'kdeconnect_clipboard' ) and device_get_method( key, 'isPluginEnabled',None, 'kdeconnect_clipboard' )
-                mod_photo =  device_get_method( key, 'hasPlugin', None, 'kdeconnect_photo' ) and device_get_method( key, 'isPluginEnabled',None, 'kdeconnect_photo' )
-                
-                
-                
-
+                mod_battery = device_get_method( key, 'isPluginEnabled', None, 'kdeconnect_battery' ) and device_get_method( key, 'hasPlugin', None, 'kdeconnect_battery' )
+                mod_sftp = device_get_method( key, 'isPluginEnabled',None, 'kdeconnect_sftp' ) and device_get_method( key, 'hasPlugin', None, 'kdeconnect_sftp' )
+                mod_ring = device_get_method( key, 'isPluginEnabled',None, 'kdeconnect_findmyphone' ) and device_get_method( key, 'hasPlugin', None, 'kdeconnect_findmyphone' )
+                mod_share = device_get_method( key, 'isPluginEnabled',None, 'kdeconnect_share' ) and device_get_method( key, 'hasPlugin', None, 'kdeconnect_share' )
+                mod_clipboard = device_get_method( key, 'isPluginEnabled',None, 'kdeconnect_clipboard' ) and device_get_method( key, 'hasPlugin', None, 'kdeconnect_clipboard' )
+                mod_photo = device_get_method( key, 'isPluginEnabled',None, 'kdeconnect_photo' ) and device_get_method( key, 'hasPlugin', None, 'kdeconnect_photo' )
                 
                 # if battery module is loaded...
                 if mod_battery :
-                    charge = device_get_property( key, 'charge', 'battery' )
-                    charging = device_get_property( key, 'isCharging', 'battery' )
-                    
+                    charge = device_get_method( key, 'charge', 'battery' )
+                    charging = device_get_method( key, 'isCharging', 'battery' )
                     if charging :
                         chrg = '(charging)'
                     else:
                         chrg = '(wasting)'
                         
-                    if charge < 0:
-                        mod_battery = False
-                        chrg = ''
-                        charge = ''
-                
-                
-                       
-                item_battery.set_label('Battery: '+str(charge)+percent+chrg) # Sets the label of battery submenu item 
+                item_battery.set_label('Batery: '+str(charge)+percent+chrg) # Sets the label of battery submenu item 
                 
                 item_sensitive(item_battery, mod_battery)
                 item_sensitive(item_browse, mod_sftp)
@@ -230,17 +216,15 @@ def kdecon_get_devices(indicator):
         indicator.set_icon('../share/xfconnect/xfconnect-icon-disconnected.svg')
 
 
-def device_get_property (dev, prop, part=None):
+        
+
+def device_get_property( dev, prop ):
     obj = 'org.kde.kdeconnect.daemon'
     path = '/modules/kdeconnect/devices/'+dev
     iface = 'org.kde.kdeconnect.device'
-    if part:
-        path = path+'/'+part
-        iface = iface+'.'+part
-        
     dbus_object = bus.get_object(obj, path) 
     dbus_interface = dbus.Interface(dbus_object, 'org.freedesktop.DBus.Properties')
-    prop_value = dbus_interface.Get(iface, prop )
+    prop_value = dbus_interface.Get(iface, prop)
     return prop_value
 
 
@@ -248,19 +232,18 @@ def device_get_method( dev, meth=None, part=None, val=None ):
     connected = device_get_property(dev,'isReachable')
     obj = 'org.kde.kdeconnect.daemon'
     path = '/modules/kdeconnect/devices/'+dev
-    iface = 'org.kde.kdeconnect.device'
     if  part :
-        iface = iface+'.'+part
-        path = path+"/"+part
+        iface = 'org.kde.kdeconnect.device.'+part
+    else:
+        iface = 'org.kde.kdeconnect.device'
 
     dbus_object = bus.get_object(obj,path)
     #dbus_obj = bus.get_object('org.kde.kdeconnect.daemon','/modules/kdeconnect/devices/'+dev)
+    dbus_interface = iface
 
-    if connected and meth :
-        if val :
-            method = dbus_object.get_dbus_method(meth,iface)(val)
-        else :
-            method = dbus_object.get_dbus_method(meth,iface)
+    if connected and meth:
+        
+        method = dbus_object.get_dbus_method(meth,dbus_interface)(val)
         return method
     else:
         return None
@@ -448,7 +431,6 @@ def enable_photo( dev, val ):
     dbus_object = bus.get_object(obj, path) 
     dbus_interface = dbus.Interface(dbus_object,iface)
     aaa = dbus_interface.setPluginEnabled('kdeconnect_photo',val)
-
 
 
 def item_sensitive( item, connected ):
