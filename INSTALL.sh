@@ -8,6 +8,7 @@ BIN_FOLDER="bin/"
 SHARE_FOLDER="share/xfconnect/"
 SYSTEMD_FOLDER="systemd/user/"
 AUTOSTART_FOLDER="autostart/"
+KDECONNECT_VERSION=$( /usr/lib/x86_64-linux-gnu/libexec/kdeconnectd -v )
 
 
 if [ ! -e "${HOME}/.config/${AUTOSTART_FOLDER}" ]
