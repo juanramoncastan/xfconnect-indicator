@@ -80,6 +80,7 @@ def build_menu_indicator():
     item_configure = gtk.ImageMenuItem(image=img_configure, label='Configure')
     item_configure.connect('activate', kdecon_configure)
     menu.append(item_configure)
+    menu.append(gtk.SeparatorMenuItem())
     #menu.show_all()
     
     return [menu,item_configure]
