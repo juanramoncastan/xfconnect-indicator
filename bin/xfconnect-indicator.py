@@ -69,7 +69,7 @@ class signalCatcher():
         bus.add_signal_receiver(handler_function=echoSignal, dbus_interface = 'org.kde.kdeconnect.device', signal_name = 'reachableChanged')
         bus.add_signal_receiver(handler_function=echoSignal, dbus_interface = 'org.kde.kdeconnect.daemon', signal_name = 'deviceListChanged')
         bus.add_signal_receiver(handler_function=echoSignal, dbus_interface = 'org.kde.kdeconnect.device', signal_name = 'nameChanged')
-        bus.add_signal_receiver(handler_function=echoSignal, dbus_interface = 'org.kde.kdeconnect.device.battery', signal_name = 'stateChanged')
+        bus.add_signal_receiver(handler_function=echoSignal, dbus_interface = 'org.kde.kdeconnect.device.battery', signal_name = 'refreshed')
         bus.add_signal_receiver(handler_function=echoSignal, dbus_interface = 'org.kde.kdeconnect.device', signal_name = 'pluginsChanged')
         bus.add_signal_receiver(handler_function=echoSignal, dbus_interface = 'org.kde.kdeconnect.device.photo', signal_name = 'photoReceived')
 
