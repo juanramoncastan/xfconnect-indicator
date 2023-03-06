@@ -1,5 +1,5 @@
 --pkgname='xfconnect-indicator'
---pkgversion='0.4'
+--pkgversion='0.4.1'
 --pkgrelease='1'
 --pkglicense='GPL'
 --pkggroup='system'
