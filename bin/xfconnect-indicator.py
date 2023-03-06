@@ -49,7 +49,7 @@ class indicatorObject:
         kdecon_get_devices(self)
 
     def set_icon(self,icon):
-        self.indicator.set_icon_full(os.path.abspath(icon),'')
+        self.indicator.set_icon_full(icon,'')
 
 
 class signalCatcher():
@@ -66,7 +66,7 @@ class signalCatcher():
 
 def build_menu_indicator():
     menu = gtk.Menu()
-    img_configure = gtk.Image.new_from_icon_name('xfce4-settings', gtk.IconSize.MENU)
+    img_configure = gtk.Image.new_from_icon_name('preferences-other', gtk.IconSize.MENU)
     item_configure = gtk.ImageMenuItem(image=img_configure, label='Configure')
     item_configure.connect('activate', kdecon_configure)
     menu.append(item_configure)
@@ -227,9 +227,9 @@ def kdecon_get_devices(indicator):
             
 
     if are_devices_connected :
-        indicator.set_icon('../share/xfconnect/xfconnect-icon.svg')
+        indicator.set_icon('smartphoneconnected')
     else:
-        indicator.set_icon('../share/xfconnect/xfconnect-icon-disconnected.svg')
+        indicator.set_icon('smartphone-disconnected')
 
 
 def device_get_property (dev, prop, part=None):
