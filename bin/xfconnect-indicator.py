@@ -160,17 +160,21 @@ def kdecon_get_devices(indicator):
                 img_photo = gtk.Image.new_from_icon_name('camera-photo', gtk.IconSize.MENU)
                 item_photo = gtk.ImageMenuItem(image=img_photo, label='Take photo')
                 item_photo.connect('activate', take_foto_dialog, key, name)
-
+                # SMS submenu
+                img_sms = gtk.Image.new_from_icon_name('dialog-messages', gtk.IconSize.MENU)
+                item_sms = gtk.ImageMenuItem(image=img_sms, label='SMS Messages...')
+                item_sms.connect('activate', kdecon_sms)
+                
                 indicator.main_menu.append(item_device)
                 device_menu.append(item_battery)
                 device_menu.append(item_browse_menu)
                 browse_menu.append(item_browse)
                 browse_menu.append(item_unmount)
-                #### device_menu.append(item_browse)
                 device_menu.append(item_ring)
                 device_menu.append(item_send_file)
                 device_menu.append(item_share_text)
                 device_menu.append(item_photo)
+                device_menu.append(item_sms)
    
             if connected :
                 mod_battery = device_get_method(key, 'hasPlugin', None, 'kdeconnect_battery') and  device_get_method(key, 'isPluginEnabled', None, 'kdeconnect_battery')
@@ -199,8 +203,8 @@ def kdecon_get_devices(indicator):
                     mounted = device_get_method(key, 'isMounted' , 'sftp')
 
                 item_battery.set_label('Battery: '+str(charge)+percent+chrg) # Sets the label of battery submenu item 
-                
-                item_sensitive(item_battery, mod_battery)
+
+                item_battery.set_sensitive(False)
                 item_sensitive(item_browse_menu, mod_sftp)
                 item_sensitive(item_browse, mod_sftp)
                 item_sensitive(item_unmount, mounted)
@@ -416,9 +420,10 @@ def item_sensitive(item, connected):
 
 
 def kdecon_configure(self):
-    dbus_object = bus.get_object('org.kde.kdeconnect.daemon', '/modules/kdeconnect')
-    dbus_object.openConfiguration()
+    os.system("kdeconnect-settings")
 
+def kdecon_sms(self):
+    os.system("kdeconnect-sms")
             
 def echoSignal(*args, **kwargs):
     #if args[0] : print(args[0])
