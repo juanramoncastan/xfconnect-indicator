@@ -69,8 +69,12 @@ def build_menu_indicator():
     img_configure = gtk.Image.new_from_icon_name('preferences-other', gtk.IconSize.MENU)
     item_configure = gtk.ImageMenuItem(image=img_configure, label='Configure')
     item_configure.connect('activate', kdecon_configure)
+    img_quit = gtk.Image.new_from_icon_name('gtk-quit', gtk.IconSize.MENU)
+    item_quit = gtk.ImageMenuItem(image=img_quit, label='Quit')
+    item_quit.connect('activate', quit)
     menu.append(item_configure)
     menu.append(gtk.SeparatorMenuItem())
+    menu.append(item_quit)
     return [menu,item_configure]
 
 
@@ -165,7 +169,7 @@ def kdecon_get_devices(indicator):
                 item_sms = gtk.ImageMenuItem(image=img_sms, label='SMS Messages...')
                 item_sms.connect('activate', kdecon_sms)
                 
-                indicator.main_menu.append(item_device)
+                indicator.main_menu.insert(item_device, 1)
                 device_menu.append(item_battery)
                 device_menu.append(item_browse_menu)
                 browse_menu.append(item_browse)
@@ -445,7 +449,7 @@ if __name__ == "__main__":
     mysignals = signalCatcher()
     signal.signal(signal.SIGINT, signal.SIG_DFL)
     
-    indicatorApp = indicatorObject('../share/xfconnect/xfconnect-icon.svg') # Creating indicator object
+    indicatorApp = indicatorObject('smartphone-disconnected') # Creating indicator object
     gtk.main() # Gtk mainloop
 
 
