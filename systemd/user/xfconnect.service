@@ -1,14 +1,16 @@
 [Unit]
 Description=xfconnect indicator service
-#After=indicator-messages.service
+After=graphical.service
 After=xfce4-indicator-plugin.target
 
 
 [Service]
 #Environment=PATH=uncomment:to:override:your:PATH
 TimeoutStartSec=6s
-ExecStart=/usr/local/bin/xfconnect-indicator.py
+ExecStart=/usr/local/bin/xfconnect-indicator.py -s
 TimeoutStartSec=2s
 Restart=on-failure
 RestartSec=3s
 
+[Install]
+WantedBy=default.target
