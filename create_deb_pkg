@@ -1,9 +1,0 @@
-#!/bin/bash
-
-SET_PKG=$(cat ./set-pkg)
-
-if [[ -n $(which checkinstall) ]] ; then
-    sudo checkinstall -D --install=no --backup=no ${SET_PKG}
-else
-    echo -e 'Install "checkinstall" first and run again this script'
-fi
