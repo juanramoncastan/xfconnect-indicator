@@ -21,18 +21,18 @@ PREFIX = /usr/local
 BIN = xfconnect-indicator.py
 CONFIG_PATH = /etc
 BIN_PATH = /bin
-LAUNCH_PATH = /xdg/autostart
 SYSTEMD_PATH = /systemd/user
 SHARE_PATH = /share
 
+
+
 install: 
+	#mkdir ./package/
 	cp .$(BIN_PATH)/xfconnect-indicator.py $(PREFIX)$(BIN_PATH)/
 	cp -R .$(SHARE_PATH)/xfconnect $(PREFIX)$(SHARE_PATH)/
 	cp .$(SYSTEMD_PATH)/xfconnect.service $(CONFIG_PATH)$(SYSTEMD_PATH)/
-	cp ./autostart/xfconnect-indicator.desktop $(CONFIG_PATH)$(LAUNCH_PATH)/
 
 uninstall:
 	rm $(PREFIX)$(BIN_PATH)/xfconnect-indicator.py
 	rm -fR $(PREFIX)$(SHARE_PATH)/xfconnect
 	rm $(CONFIG_PATH)$(SYSTEMD_PATH)/xfconnect.service
-	rm $(CONFIG_PATH)$(LAUNCH_PATH)/xfconnect-indicator.desktop
