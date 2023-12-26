@@ -29,10 +29,10 @@ SHARE_PATH = /share
 install: 
 	#mkdir ./package/
 	cp .$(BIN_PATH)/xfconnect-indicator.py $(PREFIX)$(BIN_PATH)/
-	cp -R .$(SHARE_PATH)/xfconnect $(PREFIX)$(SHARE_PATH)/
+	cp -R .$(SHARE_PATH)/icons/ $(PREFIX)$(SHARE_PATH)/
 	cp .$(SYSTEMD_PATH)/xfconnect.service $(CONFIG_PATH)$(SYSTEMD_PATH)/
 
 uninstall:
 	rm $(PREFIX)$(BIN_PATH)/xfconnect-indicator.py
-	rm -fR $(PREFIX)$(SHARE_PATH)/xfconnect
+	rm -fR $(PREFIX)$(SHARE_PATH)/icons/xfconnect-icon*
 	rm $(CONFIG_PATH)$(SYSTEMD_PATH)/xfconnect.service

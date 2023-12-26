@@ -41,14 +41,16 @@ appindicator_name = 'Xfconnect-indicator'
 
 path_script= os.path.dirname(os.path.realpath(__file__))
 os.chdir(path_script)
-icon_connected = os.path.abspath('../share/xfconnect/xfconnect-icon.svg')
-icon_disconnected = os.path.abspath('../share/xfconnect/xfconnect-icon-disconnected.svg')
+#icon_connected = os.path.abspath('../share/xfconnect/xfconnect-icon.svg')
+icon_connected = "xfconnect-icon"
+#icon_disconnected = os.path.abspath('../share/xfconnect/xfconnect-icon-disconnected.svg')
+icon_disconnected = "xfconnect-icon-disconnected"
 
-if not os.path.exists(icon_connected):
-    icon_connected = 'smartphoneconnected'
+#if not os.path.exists(icon_connected):
+#    icon_connected = 'smartphoneconnected'
 
-if not os.path.exists(icon_disconnected):
-    icon_disconnected = 'smartphone-disconnected'
+#if not os.path.exists(icon_disconnected):
+#    icon_disconnected = 'smartphone-disconnected'
     
 print('xfconnect') if DEBUG else False # Debug
 
