@@ -107,6 +107,7 @@ def kdecon_get_devices(indicator):
     dbus_object = bus.get_object(obj,path)
     dbus_interface = dbus.Interface(dbus_object, iface)
     dev = dbus_interface.deviceNames(True,True) # Getting Devices as dictionary Key = ID , Value = Name. 
+    print( dev )
     dev = dict(sorted(dev.items(), key=lambda item: item[1], reverse = True)) # Sorted alphabetically
     are_devices_connected = False
 
@@ -126,7 +127,10 @@ def kdecon_get_devices(indicator):
         
         name = dev[key]
         connected = device_get_property(key,'isReachable')
-        trusted = device_get_property(key,'isTrusted')
+        try:
+            paired = device_get_property(key,'isPaired')
+        except:
+            paired = device_get_property(key,'isTrusted')
         
         img_battery = gtk.Image.new_from_icon_name('battery', gtk.IconSize.MENU)
         img_connectivity = [gtk.Image.new_from_icon_name('nm-signal-0', gtk.IconSize.MENU),
@@ -144,7 +148,7 @@ def kdecon_get_devices(indicator):
         img_sms = gtk.Image.new_from_icon_name('indicator-messages', gtk.IconSize.MENU)
 
         
-        if trusted:
+        if paired:
             are_devices_connected = are_devices_connected or connected
             if key in indicator.devices:
                 item_device = indicator.devices[key]['item']
@@ -484,9 +488,11 @@ def item_sensitive(item, connected):
 
 
 def kdecon_configure(self):
-    #os.system('kdeconnect-settings')
-    dbus_object = bus.get_object('org.kde.kdeconnect.daemon', '/modules/kdeconnect')
-    dbus_object.openConfiguration()
+    try:
+        dbus_object = bus.get_object('org.kde.kdeconnect.daemon', '/modules/kdeconnect')
+        dbus_object.openConfiguration()
+    except:
+        os.system('kdeconnect-settings')
 
 
 
