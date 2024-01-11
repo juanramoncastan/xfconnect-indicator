@@ -41,17 +41,12 @@ appindicator_name = 'Xfconnect-indicator'
 
 path_script= os.path.dirname(os.path.realpath(__file__))
 os.chdir(path_script)
-#icon_connected = os.path.abspath('../share/xfconnect/xfconnect-icon.svg')
+
 icon_connected = "xfconnect-icon"
-#icon_disconnected = os.path.abspath('../share/xfconnect/xfconnect-icon-disconnected.svg')
+
 icon_disconnected = "xfconnect-icon-disconnected"
 
-#if not os.path.exists(icon_connected):
-#    icon_connected = 'smartphoneconnected'
 
-#if not os.path.exists(icon_disconnected):
-#    icon_disconnected = 'smartphone-disconnected'
-    
 print('xfconnect') if DEBUG else False # Debug
 
 class indicatorObject:
@@ -73,7 +68,12 @@ class indicatorObject:
 class signalCatcher():
     def __init__(self):
         bus.add_signal_receiver(handler_function=echoSignal, dbus_interface = 'org.kde.kdeconnect.device', signal_name = 'reachableChanged')
+        bus.add_signal_receiver(handler_function=echoSignal, dbus_interface = 'org.kde.kdeconnect.daemon', signal_name = 'announcedNameChanged')
         bus.add_signal_receiver(handler_function=echoSignal, dbus_interface = 'org.kde.kdeconnect.daemon', signal_name = 'deviceListChanged')
+        bus.add_signal_receiver(handler_function=echoSignal, dbus_interface = 'org.kde.kdeconnect.daemon', signal_name = 'deviceAdded')
+        bus.add_signal_receiver(handler_function=echoSignal, dbus_interface = 'org.kde.kdeconnect.daemon', signal_name = 'deviceRemoved')
+        bus.add_signal_receiver(handler_function=echoSignal, dbus_interface = 'org.kde.kdeconnect.daemon', signal_name = 'customDevicesChanged')
+        bus.add_signal_receiver(handler_function=echoSignal, dbus_interface = 'org.kde.kdeconnect.daemon', signal_name = 'devicesVisibiityChanged')
         bus.add_signal_receiver(handler_function=echoSignal, dbus_interface = 'org.kde.kdeconnect.device', signal_name = 'nameChanged')
         bus.add_signal_receiver(handler_function=echoSignal, dbus_interface = 'org.kde.kdeconnect.device.battery', signal_name = 'refreshed')
         bus.add_signal_receiver(handler_function=echoSignal, dbus_interface = 'org.kde.kdeconnect.device', signal_name = 'pluginsChanged')
@@ -107,15 +107,19 @@ def kdecon_get_devices(indicator):
     dbus_object = bus.get_object(obj,path)
     dbus_interface = dbus.Interface(dbus_object, iface)
     dev = dbus_interface.deviceNames(True,True) # Getting Devices as dictionary Key = ID , Value = Name. 
-    print( dev )
+    
     dev = dict(sorted(dev.items(), key=lambda item: item[1], reverse = True)) # Sorted alphabetically
     are_devices_connected = False
 
     for key in list(indicator.devices.keys()):
-        if not key in dev.keys() or not device_get_property(key,'isTrusted'):
+        try:
+            paired = device_get_property(key,'isPaired')
+        except:
+            paired = device_get_property(key,'isTrusted')
+        if not key in dev.keys() or not paired:
             indicator.devices[key]['item'].destroy()
             del indicator.devices[key]
-    
+
     for key in dev.keys():
         percent=' '
         chrg = '(disabled)'
@@ -506,6 +510,7 @@ def connectivity(*args, **kwargs):
 
 def echoSignal(*args, **kwargs):
     kdecon_get_devices(indicatorApp)
+    print("Algo ha cambiado") if DEBUG else False # DEBUG
 
 
 def mssg_help():

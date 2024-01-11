@@ -20,6 +20,7 @@
 PREFIX = /usr/local
 BIN = xfconnect-indicator.py
 CONFIG_PATH = /etc
+SRC_PATH = /src
 BIN_PATH = /bin
 SYSTEMD_PATH = /systemd/user
 SHARE_PATH = /share
@@ -28,7 +29,7 @@ SHARE_PATH = /share
 
 install: 
 	#mkdir ./package/
-	cp .$(BIN_PATH)/xfconnect-indicator.py $(PREFIX)$(BIN_PATH)/
+	cp .$(SRC_PATH)/xfconnect-indicator.py $(PREFIX)$(BIN_PATH)/
 	cp -R .$(SHARE_PATH)/icons/ $(PREFIX)$(SHARE_PATH)/
 	cp .$(SYSTEMD_PATH)/xfconnect.service $(CONFIG_PATH)$(SYSTEMD_PATH)/
 
