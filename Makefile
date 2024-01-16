@@ -13,12 +13,9 @@
 #  GNU General Public License for more details.
 #
 # ----------------------------------------------------------------------
-#
-# xfconnect-indicator.py
-#
-#
-PREFIX = /usr/local
-BIN = xfconnect-indicator.py
+
+
+PREFIX = /usr
 CONFIG_PATH = /etc
 SRC_PATH = /src
 BIN_PATH = /bin
@@ -26,14 +23,17 @@ SYSTEMD_PATH = /systemd/user
 SHARE_PATH = /share
 
 
-
 install: 
-	#mkdir ./package/
-	cp .$(SRC_PATH)/xfconnect-indicator.py $(PREFIX)$(BIN_PATH)/
-	cp -R .$(SHARE_PATH)/icons/ $(PREFIX)$(SHARE_PATH)/
-	cp .$(SYSTEMD_PATH)/xfconnect.service $(CONFIG_PATH)$(SYSTEMD_PATH)/
+	mkdir -p  $(BUILD)$(PREFIX)$(BIN_PATH)
+	mkdir -p  $(BUILD)$(CONFIG_PATH)$(SYSTEMD_PATH)/
+	mkdir -p  $(BUILD)$(PREFIX)$(SHARE_PATH)/icons/
+	sed -i  -e "s|\(ExecStart=\)\(.*\)|\1$(PREFIX)$(BIN_PATH)/xfconnect-indicator.py -s|" .$(SYSTEMD_PATH)/xfconnect.service
+	cp .$(BIN_PATH)/xfconnect-indicator.py $(BUILD)$(PREFIX)$(BIN_PATH)/xfconnect-indicator.py
+	cp .$(SYSTEMD_PATH)/xfconnect.service $(BUILD)$(CONFIG_PATH)$(SYSTEMD_PATH)/xfconnect.service
+	cp .$(SHARE_PATH)/icons/* $(BUILD)$(PREFIX)$(SHARE_PATH)/icons/
+	
 
 uninstall:
-	rm $(PREFIX)$(BIN_PATH)/xfconnect-indicator.py
-	rm -fR $(PREFIX)$(SHARE_PATH)/icons/xfconnect-icon*
-	rm $(CONFIG_PATH)$(SYSTEMD_PATH)/xfconnect.service
+	rm $(BUILD)$(PREFIX)$(BIN_PATH)/xfconnect-indicator.py
+	rm -fR $(BUILD)$(PREFIX)$(SHARE_PATH)/icons/xfconnect*
+	rm $(BUILD)$(CONFIG_PATH)$(SYSTEMD_PATH)/xfconnect.service
