@@ -14,6 +14,10 @@
 #
 # ----------------------------------------------------------------------
 
+# ###########      xfconnect-indicator Makefile     ###########################
+
+
+# BUILD = "../package_name-version" given from "deb_package_creator" app
 
 PREFIX = /usr
 CONFIG_PATH = /etc
@@ -35,5 +39,5 @@ install:
 
 uninstall:
 	rm $(BUILD)$(PREFIX)$(BIN_PATH)/xfconnect-indicator.py
-	rm -fR $(BUILD)$(PREFIX)$(SHARE_PATH)/icons/xfconnect*
+	rm $(BUILD)$(PREFIX)$(SHARE_PATH)/icons/xfconnect*
 	rm $(BUILD)$(CONFIG_PATH)$(SYSTEMD_PATH)/xfconnect.service
