@@ -4,7 +4,7 @@
 ---------------------------------------------------------------
     xfconnect-indicator
     it is an AppIndicator for Kdeconnect in xfce environment.
-    VERSION 0.5.0-1
+    VERSION 0.5.0-2
 
     Copyright (C) 2013 Juan Ramon Castan Guillen <juanramoncastan@yahoo.es>
 
