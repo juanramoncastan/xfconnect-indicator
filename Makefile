@@ -19,13 +19,14 @@
 
 # BUILD = "../package_name-version" given from "deb_package_creator" app
 
-PREFIX = /usr
+PREFIX = /usr/local
 CONFIG_PATH = /etc
 SRC_PATH = /src
 BIN_PATH = /bin
 SYSTEMD_PATH = /systemd/user
 SHARE_PATH = /share
 
+changeservice:
 
 install: 
 	mkdir -p  $(BUILD)$(PREFIX)$(BIN_PATH)
