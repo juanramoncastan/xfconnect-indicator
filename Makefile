@@ -16,6 +16,7 @@
 
 # ###########      xfconnect-indicator Makefile     ###########################
 
+# Version: 0.5.0-4
 
 # BUILD = "../package_name-version" given from "deb_package_creator" app
 
@@ -26,9 +27,10 @@ BIN_PATH = /bin
 SYSTEMD_PATH = /systemd/user
 SHARE_PATH = /share
 
-changeservice:
-
-install: 
+change_service_path:
+	sed -i  -e "s|\(ExecStart=\)\(.*\)|\1$(PREFIX)$(BIN_PATH)/xfconnect-indicator.py -s|" .$(SYSTEMD_PATH)/xfconnect.service
+	
+install: change_service_path
 	mkdir -p  $(BUILD)$(PREFIX)$(BIN_PATH)
 	mkdir -p  $(BUILD)$(CONFIG_PATH)$(SYSTEMD_PATH)/
 	mkdir -p  $(BUILD)$(PREFIX)$(SHARE_PATH)/icons/

@@ -18,6 +18,10 @@
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
 ---------------------------------------------------------------
+
+xfconnect-indicator
+Version: 0.5.0-4
+
 '''
 
 import gi
