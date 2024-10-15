@@ -16,10 +16,10 @@
 
 # ###########      xfconnect-indicator Makefile     ###########################
 
-# Version: 0.5.0-4
+# Version: 0.5.1-7
 
-# BUILD = "../package_name-version" given from "deb_package_creator" app
-
+# BUILD = "../package-name_version_architecture" given from "debianizador" script
+BUILD = ../debpkg
 PREFIX = /usr/local
 CONFIG_PATH = /etc
 SRC_PATH = /src

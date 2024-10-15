@@ -20,9 +20,10 @@
 ---------------------------------------------------------------
 
 xfconnect-indicator
-Version: 0.5.0-4
+Version: 0.5.1-7
 
 '''
+
 
 import gi
 import dbus

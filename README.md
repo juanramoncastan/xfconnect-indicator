@@ -1,7 +1,6 @@
 # xfconnect-indicator
 ----------------------------------------------------------------------
-xfconnect-indicator
-Version: 0.5.0-4
+Version: 0.5.1-7
 ----------------------------------------------------------------------
 This is a kdeconnect indicator for xfce4 environment.
 It is a python script that uses dbus.
