@@ -1,0 +1,6 @@
+#!/bin/sh
+
+systemctl --global disable xfconnect.service
+systemctl daemon-reload
+
+exit 0

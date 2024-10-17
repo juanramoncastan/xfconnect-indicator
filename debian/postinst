@@ -1,0 +1,6 @@
+#!/bin/sh
+
+systemctl daemon-reload
+systemctl --global enable xfconnect.service
+
+exit 0

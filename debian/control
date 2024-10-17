@@ -1,0 +1,8 @@
+Package: xfconnect-indicator
+Version: 0.5.1-7
+Section: net
+Priority: optional
+Architecture: all
+Depends: kdeconnect, python3-gi, python3-dbus, gir1.2-ayatanaappindicator3-0.1|gir1.2-appindicator3-0.1
+Maintainer: Juan Ramon Castan <monon@quadraphonic>
+Description: Xfconnect-indicator is an AppIndicator for Kdeconnect in xfce environment.
