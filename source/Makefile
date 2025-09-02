@@ -19,10 +19,9 @@
 # Version: 0.5.1-7
 
 # BUILD = "../package-name_version_architecture" given from "debianizador" script
-BUILD = ../debpkg
-PREFIX = /usr/local
+BUILD = 
+PREFIX = /usr
 CONFIG_PATH = /etc
-SRC_PATH = /src
 BIN_PATH = /bin
 SYSTEMD_PATH = /systemd/user
 SHARE_PATH = /share
