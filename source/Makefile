@@ -15,16 +15,15 @@
 # ----------------------------------------------------------------------
 
 # ###########      xfconnect-indicator Makefile     ###########################
+# Version: 0.6-1
 
-# Version: 0.5.1-7
-
-# BUILD = "../package-name_version_architecture" given from "debianizador" script
-BUILD = 
+#####  BUILD = "../package-name_version_architecture" given from "debianizador" script
 PREFIX = /usr
 CONFIG_PATH = /etc
 BIN_PATH = /bin
 SYSTEMD_PATH = /systemd/user
 SHARE_PATH = /share
+
 
 change_service_path:
 	sed -i  -e "s|\(ExecStart=\)\(.*\)|\1$(PREFIX)$(BIN_PATH)/xfconnect-indicator.py -s|" .$(SYSTEMD_PATH)/xfconnect.service
