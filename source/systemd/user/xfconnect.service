@@ -1,14 +1,14 @@
 [Unit]
 Description=xfconnect indicator service
 After=graphical.target
-Requieres=xfce4-notifyd.service
+Requires=xfce4-notifyd.service
 Requires=dbus.service
 
 
 [Service]
 #Environment=PATH=uncomment:to:override:your:PATH
 ExecStart=/usr/bin/xfconnect-indicator.py -s
-TimeoutStartSec=2s
+TimeoutStartSec=10s
 Restart=on-failure
 RestartSec=3s
 
