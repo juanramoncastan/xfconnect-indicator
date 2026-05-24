@@ -18,6 +18,7 @@
 # Version: 0.6-1
 
 #####  BUILD = "../package-name_version_architecture" given from "debianizador" script
+BUILD =
 PREFIX = /usr
 CONFIG_PATH = /etc
 BIN_PATH = /bin
